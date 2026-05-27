@@ -2,46 +2,47 @@
 
 ## Project description
 
-This repository contains sample Terraform configurations that provision a Windows Server virtual machine and install a web server (IIS) on it. The examples demonstrate how to:
+This repository contains sample Terraform configurations that provision a Windows Server virtual machine in Azure and install a web server (IIS) on it. The examples demonstrate how to:
 
-- Create and configure a Windows VM using Terraform.
-- Provision the VM at deploy-time to install and configure IIS (Microsoft Internet Information Services).
-- Parameterize deployments using Terraform variables and modular configuration.
+- Create and configure a Windows VM using Terraform (AzureRM provider).
+- Provision the VM at deploy-time to install and configure IIS.
+- Parameterize deployments using Terraform variables and a sample `terraform.tfvars`.
 - Apply idempotent, repeatable infrastructure deployments suitable for CI/CD.
 
-These scripts are intended as educational samples and starting points for deploying Windows-based web workloads in cloud or lab environments. Review, adapt, and secure them before using in production.
+These scripts are educational samples and starting points for deploying Windows-based web workloads. Review, adapt, and secure them before using in production.
 
 ## Contents
 
-- `main.tf` — Primary Terraform configuration for provisioning resources.
-- `variables.tf` — Input variables and defaults.
-- `outputs.tf` — Outputs exported by the configuration.
-- `scripts/install-iis.ps1` — PowerShell provisioning script executed on the VM to install and configure IIS.
-- `modules/` — Optional reusable modules.
+- `providers.tf` — Terraform settings and provider configuration (`azurerm`).
+- `main.tf` — Primary resources (resource group, VNet, subnet, public IP, NIC, Windows VM, extension to install IIS).
+- `variables.tf` — Input variables with comments and defaults.
+- `outputs.tf` — Useful outputs after apply (public IP, VM name).
+- `terraform.tfvars.example` — Example variable values to copy to `terraform.tfvars`.
+- `scripts/install-iis.ps1` — PowerShell script to install IIS and deploy a sample index.html.
 
 ## Prerequisites
 
-- Terraform 1.0 or later installed locally.
-- Credentials and provider configuration for your chosen cloud provider (Azure, AWS, etc.).
-- Network and security considerations (open ports for RDP and HTTP/HTTPS as appropriate).
+- Terraform 1.0+ installed.
+- Azure CLI or other method to authenticate the AzureRM provider (`az login` or service principal).
+- A secure way to provide secrets (do not commit `admin_password` to source control).
 
 ## Quick start
 
-1. Configure provider credentials (see provider-specific docs).
-2. Edit `variables.tf` or provide a `terraform.tfvars` file with required values.
-3. Run `terraform init` to initialize the working directory.
-4. Run `terraform plan` to preview changes.
-5. Run `terraform apply` to create resources and provision the VM.
+1. Copy `terraform.tfvars.example` to `terraform.tfvars` and update values (do not commit secrets).
+2. Run `terraform init` to initialize providers.
+3. Run `terraform plan` to preview changes.
+4. Run `terraform apply` to create resources and provision the VM.
+5. Use `terraform output public_ip_address` to get the site IP and visit it in a browser.
 
-## Provisioning and customization
+## Cleanup
 
-The repository uses a PowerShell provisioning script (`scripts/install-iis.ps1`) that runs on first boot to install IIS and deploy a sample site. Modify the script to customize site content, implement security hardening, or to install additional software.
+Run `terraform destroy` to remove resources when finished.
 
-## Security and cleanup
+## Notes
 
-- Use secure methods to store credentials (environment variables, managed identities, or secret stores).
-- Remove or destroy resources after testing with `terraform destroy` to avoid unexpected costs.
+- This sample uses the Azure `CustomScriptExtension` to run inline PowerShell that installs IIS. For production, host `scripts/install-iis.ps1` in a secure storage and reference it from the VM extension using `fileUris`.
+- Consider adding Network Security Groups (NSGs) and Azure Key Vault for secrets in real deployments.
 
 ## License
 
-This project is provided under the MIT License — see `LICENSE` for details.
+MIT
