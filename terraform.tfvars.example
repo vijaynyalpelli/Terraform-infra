@@ -1,6 +1,7 @@
 # Copy this file to terraform.tfvars and replace placeholder values.
 # Do NOT commit secrets to source control.
 
+subscription_id     = "YOUR-SUBSCRIPTION-ID"
 location            = "eastus"
 resource_group_name = "rg-terraform-windows"
 vm_name             = "win-iis-vm"
