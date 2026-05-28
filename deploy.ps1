@@ -35,8 +35,8 @@
     .\deploy.ps1 -SubscriptionId "12345678-1234-1234-1234-123456789012" -TerraformAction "destroy" -AutoApprove
 
 .NOTES
-    Author: Terraform Team
-    Date: $(Get-Date -Format 'yyyy-MM-dd')
+    Author: Vijay Nyalpelli
+    Date: 28-May-2026
 #>
 
 param (
