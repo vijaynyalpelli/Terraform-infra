@@ -1,0 +1,224 @@
+﻿PS C:\Users\Vijay\terraform-infra-codebase\Terraform-infra> .\deploy.ps1 <sub id>
+
+========================================
+Terraform Azure Deployment Script
+========================================
+
+Checking prerequisites...
+? Azure CLI found
+? Terraform found
+? Terraform version: 1.15.4
+Updating terraform.tfvars with subscription ID...
+? Subscription ID updated in terraform.tfvars
+
+========================================
+Azure Authentication
+========================================
+
+Checking Azure login status...
+? Already logged in to Azure
+Current subscription: Pay-As-You-Go
+
+
+========================================
+Setting Azure Subscription
+========================================
+
+Setting subscription to: <>...
+? Subscription set to: Pay-As-You-Go
+
+========================================
+Terraform Init
+========================================
+
+Initializing Terraform...
+Initializing provider plugins found in the configuration...
+- Reusing previous version of hashicorp/azurerm from the dependency lock file
+- Using previously-installed hashicorp/azurerm v3.117.1
+
+Initializing the backend...
+
+Initializing provider plugins found in the state...
+- Reusing previous version of hashicorp/azurerm
+- Using previously-installed hashicorp/azurerm v3.117.1
+
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+? Terraform initialized successfully
+
+========================================
+Terraform Plan
+========================================
+
+Planning Terraform deployment...
+azurerm_resource_group.rg: Refreshing state... [id=/subscriptions/<sub ID>
+azurerm_virtual_network.vnet: Refreshing state... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/virtualNetworks/vnet-terraform]
+azurerm_public_ip.pip: Refreshing state... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/publicIPAddresses/win-iis-vm-pip]
+azurerm_subnet.subnet: Refreshing state... [id=/subscriptions/<sub id>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/virtualNetworks/vnet-terraform/subnets/subnet-01]
+azurerm_network_interface.nic: Refreshing state... [id=/subscriptions/<sub id>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/networkInterfaces/win-iis-vm-nic]
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the
+following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # azurerm_virtual_machine_extension.install_iis will be created
+  + resource "azurerm_virtual_machine_extension" "install_iis" {
+      + failure_suppression_enabled = false
+      + id                          = (known after apply)
+      + name                        = "InstallIIS"
+      + publisher                   = "Microsoft.Compute"
+      + settings                    = jsonencode(
+            {
+              + commandToExecute = "powershell -NoProfile -ExecutionPolicy Unrestricted -Command \"Install-WindowsFeature -Name Web-Server -IncludeManagementTools; Set-Content -Path 'C:\\inetpub\\wwwroot\\index.html' -Value '<html><body><h1>Sample IIS site deployed by Terraform</h1></body></html>' -Force\""
+            }
+        )
+      + type                        = "CustomScriptExtension"
+      + type_handler_version        = "1.10"
+      + virtual_machine_id          = (known after apply)
+    }
+
+  # azurerm_windows_virtual_machine.vm will be created
+  + resource "azurerm_windows_virtual_machine" "vm" {
+      + admin_password                                         = (sensitive value)
+      + admin_username                                         = "azureuser"
+      + allow_extension_operations                             = true
+      + bypass_platform_safety_checks_on_user_schedule_enabled = false
+      + computer_name                                          = (known after apply)
+      + disk_controller_type                                   = (known after apply)
+      + enable_automatic_updates                               = true
+      + extensions_time_budget                                 = "PT1H30M"
+      + hotpatching_enabled                                    = false
+      + id                                                     = (known after apply)
+      + location                                               = "eastus"
+      + max_bid_price                                          = -1
+      + name                                                   = "win-iis-vm"
+      + network_interface_ids                                  = [
+          + "/subscriptions/<sub id>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/networkInterfaces/win-iis-vm-nic",
+        ]
+      + patch_assessment_mode                                  = "ImageDefault"
+      + patch_mode                                             = "AutomaticByOS"
+      + platform_fault_domain                                  = -1
+      + priority                                               = "Regular"
+      + private_ip_address                                     = (known after apply)
+      + private_ip_addresses                                   = (known after apply)
+      + provision_vm_agent                                     = true
+      + public_ip_address                                      = (known after apply)
+      + public_ip_addresses                                    = (known after apply)
+      + resource_group_name                                    = "rg-terraform-windows"
+      + size                                                   = "Standard_B2s"
+      + virtual_machine_id                                     = (known after apply)
+      + vm_agent_platform_updates_enabled                      = false
+
+      + os_disk {
+          + caching                   = "ReadWrite"
+          + disk_size_gb              = 127
+          + name                      = (known after apply)
+          + storage_account_type      = "Standard_LRS"
+          + write_accelerator_enabled = false
+        }
+
+      + source_image_reference {
+          + offer     = "WindowsServer"
+          + publisher = "MicrosoftWindowsServer"
+          + sku       = "2019-Datacenter"
+          + version   = "latest"
+        }
+
+      + termination_notification (known after apply)
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Saved the plan to: tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tfplan"
+? Terraform plan completed successfully
+
+========================================
+Terraform Apply
+========================================
+
+Do you want to apply these changes? (yes/no): yes
+Applying Terraform configuration...
+azurerm_windows_virtual_machine.vm: Creating...
+azurerm_windows_virtual_machine.vm: Still creating... [00m10s elapsed]
+azurerm_windows_virtual_machine.vm: Still creating... [00m20s elapsed]
+azurerm_windows_virtual_machine.vm: Still creating... [00m30s elapsed]
+azurerm_windows_virtual_machine.vm: Still creating... [00m40s elapsed]
+azurerm_windows_virtual_machine.vm: Still creating... [00m50s elapsed]
+azurerm_windows_virtual_machine.vm: Still creating... [01m00s elapsed]
+azurerm_windows_virtual_machine.vm: Still creating... [01m10s elapsed]
+azurerm_windows_virtual_machine.vm: Still creating... [01m20s elapsed]
+azurerm_windows_virtual_machine.vm: Still creating... [01m30s elapsed]
+azurerm_windows_virtual_machine.vm: Creation complete after 1m38s [id=/subscriptions/<sub id>/resourceGroups/rg-terraform-windows/providers/Microsoft.Compute/virtualMachines/win-iis-vm]
+azurerm_virtual_machine_extension.install_iis: Creating...
+azurerm_virtual_machine_extension.install_iis: Still creating... [00m10s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [00m20s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [00m30s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [00m40s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [00m50s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [01m00s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [01m10s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [01m20s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [01m30s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [01m40s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [01m50s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [02m00s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [02m10s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [02m20s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [02m30s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [02m40s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [02m50s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [03m00s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [03m10s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [03m20s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [03m30s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [03m40s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [03m50s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [04m00s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [04m10s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [04m20s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [04m30s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [04m40s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [04m50s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [05m00s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [05m10s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still creating... [05m20s elapsed]
+azurerm_virtual_machine_extension.install_iis: Creation complete after 5m20s [id=/subscriptions/<sub id>/resourceGroups/rg-terraform-windows/providers/Microsoft.Compute/virtualMachines/win-iis-vm/extensions/InstallIIS]
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+admin_username = "azureuser"
+public_ip_address = ""
+vm_name = "win-iis-vm"
+? Terraform apply completed successfully
+
+========================================
+Deployment Outputs
+========================================
+
+admin_username = "azureuser"
+public_ip_address = ""
+vm_name = "win-iis-vm"
+
+========================================
+Deployment Complete
+========================================
+
+? Terraform deployment script finished successfully!
+PS C:\Users\Vijay\terraform-infra-codebase\Terraform-infra>

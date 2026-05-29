@@ -91,5 +91,9 @@ variable "image_sku" {
 variable "os_disk_size_gb" {
   description = "OS disk size in GB."
   type        = number
-  default     = 30
+  # The OS image used may require a larger minimum disk size (for example some
+  # Windows Server images include a larger OS disk). Increase this value if you
+  # see an error during VM creation stating the image disk is larger than the
+  # requested size. Default set to 127 GB to match common platform image sizes.
+  default     = 127
 }

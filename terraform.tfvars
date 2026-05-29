@@ -17,5 +17,7 @@ public_ip_sku       = "Basic"
 image_publisher     = "MicrosoftWindowsServer"
 image_offer         = "WindowsServer"
 image_sku           = "2019-Datacenter"
-os_disk_size_gb     = 30
+os_disk_size_gb     = 127
+
+
 
