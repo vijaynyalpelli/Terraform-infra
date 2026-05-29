@@ -23,7 +23,7 @@
 | File | Status | Purpose |
 |------|--------|---------|
 | `deploy.ps1` | ? NEW | PowerShell automation script for Terraform deployment |
-| `scripts/install-iis.ps1` | ? READY | PowerShell script to install IIS on Windows VM |
+| `IIS Install Scripts/install-iis.ps1` | ? READY | PowerShell script to install IIS on Windows VM |
 
 ### ?? DOCUMENTATION (New)
 

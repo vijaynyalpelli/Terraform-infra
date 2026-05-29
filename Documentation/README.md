@@ -18,7 +18,7 @@ These scripts are educational samples and starting points for deploying Windows-
 - `variables.tf` — Input variables with comments and defaults.
 - `outputs.tf` — Useful outputs after apply (public IP, VM name).
 - `terraform.tfvars.example` — Example variable values to copy to `terraform.tfvars`.
-- `scripts/install-iis.ps1` — PowerShell script to install IIS and deploy a sample index.html.
+`IIS Install Scripts/install-iis.ps1` — PowerShell script to install IIS and deploy a sample index.html.
 
 ## Prerequisites
 

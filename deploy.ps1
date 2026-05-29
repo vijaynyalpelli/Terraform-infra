@@ -41,17 +41,9 @@
 
 param (
     [Parameter(Mandatory = $true, HelpMessage = "Azure subscription ID")]
-    [ValidateScript({
-        if ($_ -match '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$') {
-            $true
-        } else {
-            throw "Invalid subscription ID format. Please provide a valid UUID."
-        }
-    })]
     [string]$SubscriptionId,
 
     [Parameter(Mandatory = $false)]
-    [ValidateSet('init', 'plan', 'apply', 'destroy', 'all')]
     [string]$TerraformAction = 'all',
 
     [switch]$AutoApprove
@@ -83,8 +75,35 @@ function Write-Error-Custom {
     Write-Host "? $Message" -ForegroundColor Red
 }
 
+function Show-Usage {
+    param([string]$Message)
+
+    if ($Message) { Write-Host "`nERROR: $Message`n" -ForegroundColor Red }
+    Write-Host "Usage examples:" -ForegroundColor Cyan
+    Write-Host "  .\deploy.ps1 -SubscriptionId \"12345678-1234-1234-1234-123456789012\"" -ForegroundColor Yellow
+    Write-Host "  .\deploy.ps1 -SubscriptionId \"12345678-1234-1234-1234-123456789012\" -AutoApprove" -ForegroundColor Yellow
+    Write-Host "  .\deploy.ps1 -SubscriptionId \"12345678-1234-1234-1234-123456789012\" -TerraformAction \"plan\"" -ForegroundColor Yellow
+    Write-Host "Parameters:" -ForegroundColor Cyan
+    Write-Host "  -SubscriptionId   Required. Azure subscription ID (GUID)." -ForegroundColor Yellow
+    Write-Host "  -TerraformAction   Optional. One of: init, plan, apply, destroy, all (default: all)." -ForegroundColor Yellow
+    Write-Host "  -AutoApprove       Optional. Skip interactive confirmations." -ForegroundColor Yellow
+    Write-Host "" -ForegroundColor Cyan
+}
+
 try {
     Write-Header "Terraform Azure Deployment Script"
+
+    # Runtime validation for parameters — provide friendly usage when invalid or blank
+    $allowedActions = @('init','plan','apply','destroy','all')
+    if ([string]::IsNullOrWhiteSpace($SubscriptionId) -or -not ($SubscriptionId -match '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')) {
+        Show-Usage "Invalid or missing subscription ID. Provide a valid GUID in the form xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx."
+        exit 1
+    }
+
+    if ($TerraformAction -notin $allowedActions) {
+        Show-Usage "Invalid TerraformAction: '$TerraformAction'"
+        exit 1
+    }
 
     # Check if Azure CLI is installed
     Write-Host "Checking prerequisites..."

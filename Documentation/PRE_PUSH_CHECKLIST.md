@@ -36,7 +36,7 @@ nothing added to commit but untracked files present
 ? `HOW_VARIABLES_WORK.md` — Learning guide
 ? `SUBSCRIPTION_ID_REMOVAL_SUMMARY.md` — Summary
 ? `.gitignore` — Protection rules
-? `scripts/install-iis.ps1` — IIS setup script
+? `IIS Install Scripts/install-iis.ps1` — IIS setup script
 
 ### Files Protected (Will NOT Push)
 ? `terraform.tfvars` — Has your subscription ID & password

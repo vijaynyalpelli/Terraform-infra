@@ -13,7 +13,7 @@ This repository is configured to **NEVER commit the subscription ID or other sec
 
 ### **Method 1: Using deploy.ps1 (Recommended)**
 
-This is the safest method - subscription ID is passed as parameter and **never written to disk permanently**.
+This is the recommended method. The script accepts the subscription ID as a parameter and writes it into `terraform.tfvars` on disk (created from `terraform.tfvars.example`) so Terraform can read it. The `terraform.tfvars` file is listed in `.gitignore` and should not be committed.
 
 #### Command:
 ```powershell
@@ -37,9 +37,9 @@ This is the safest method - subscription ID is passed as parameter and **never w
 
 **How it works:**
 1. Script receives subscription ID as parameter
-2. Script temporarily updates `terraform.tfvars` in memory during execution
-3. Terraform uses the values for deployment
-4. ?? NOTE: `terraform.tfvars` is modified but `.gitignore` prevents committing it
+2. The script creates/updates `terraform.tfvars` from `terraform.tfvars.example` and inserts the provided subscription ID.
+3. Terraform uses the values from `terraform.tfvars` for deployment.
+4. `terraform.tfvars` is ignored by Git (see `.gitignore`) — do not commit it.
 
 ---
 

@@ -1,7 +1,7 @@
 # Copy this file to terraform.tfvars and replace placeholder values.
 # Do NOT commit secrets to source control.
 
-subscription_id     = "YOUR-SUBSCRIPTION-ID"
+subscription_id = "b0a65222-af08-42ca-9e96-f990066d7573"
 location            = "eastus"
 resource_group_name = "rg-terraform-windows"
 vm_name             = "win-iis-vm"
@@ -18,3 +18,4 @@ image_publisher     = "MicrosoftWindowsServer"
 image_offer         = "WindowsServer"
 image_sku           = "2019-Datacenter"
 os_disk_size_gb     = 30
+
