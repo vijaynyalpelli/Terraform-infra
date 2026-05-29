@@ -1,0 +1,261 @@
+
+Vijay@DESKTOP-2CC0QF5 MINGW64 ~/terraform-infra-codebase/Terraform-infra (main)
+$ terraform.exe destroy
+azurerm_resource_group.rg: Refreshing state... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows]
+azurerm_virtual_network.vnet: Refreshing state... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/virtualNetworks/vnet-t
+erraform]
+azurerm_public_ip.pip: Refreshing state... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/publicIPAddresses/win-iis-vm-
+pip]
+azurerm_subnet.subnet: Refreshing state... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/virtualNetworks/vnet-terrafor
+m/subnets/subnet-01]
+azurerm_network_interface.nic: Refreshing state... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/networkInterfaces/win
+-iis-vm-nic]
+azurerm_windows_virtual_machine.vm: Refreshing state... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Compute/virtualMachines/
+win-iis-vm]
+azurerm_virtual_machine_extension.install_iis: Refreshing state... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Compute/virtu
+alMachines/win-iis-vm/extensions/InstallIIS]
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # azurerm_network_interface.nic will be destroyed
+  - resource "azurerm_network_interface" "nic" {
+      - accelerated_networking_enabled = false -> null
+      - applied_dns_servers            = [] -> null
+      - dns_servers                    = [] -> null
+      - enable_accelerated_networking  = false -> null
+      - enable_ip_forwarding           = false -> null
+      - id                             = "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/networkInterfaces/win-iis-vm-nic"
+-> null
+      - internal_domain_name_suffix    = "soidqakzxbteznmwlypjezva0e.bx.internal.cloudapp.net" -> null
+      - ip_forwarding_enabled          = false -> null
+      - location                       = "eastus" -> null
+      - mac_address                    = "7C-ED-8D-D7-FC-17" -> null
+      - name                           = "win-iis-vm-nic" -> null
+      - private_ip_address             = "10.0.1.4" -> null
+      - private_ip_addresses           = [
+          - "10.0.1.4",
+        ] -> null
+      - resource_group_name            = "rg-terraform-windows" -> null
+      - tags                           = {} -> null
+      - virtual_machine_id             = "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Compute/virtualMachines/win-iis-vm" -> nul
+l
+        # (4 unchanged attributes hidden)
+
+      - ip_configuration {
+          - name                                               = "internal" -> null
+          - primary                                            = true -> null
+          - private_ip_address                                 = "10.0.1.4" -> null
+          - private_ip_address_allocation                      = "Dynamic" -> null
+          - private_ip_address_version                         = "IPv4" -> null
+          - public_ip_address_id                               = "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/publicIPAd
+dresses/win-iis-vm-pip" -> null
+          - subnet_id                                          = "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/virtualNet
+works/vnet-terraform/subnets/subnet-01" -> null
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+  # azurerm_public_ip.pip will be destroyed
+  - resource "azurerm_public_ip" "pip" {
+      - allocation_method       = "Dynamic" -> null
+      - ddos_protection_mode    = "VirtualNetworkInherited" -> null
+      - id                      = "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/publicIPAddresses/win-iis-vm-pip" -> null
+      - idle_timeout_in_minutes = 4 -> null
+      - ip_address              = "40.87.25.79" -> null
+      - ip_tags                 = {} -> null
+      - ip_version              = "IPv4" -> null
+      - location                = "eastus" -> null
+      - name                    = "win-iis-vm-pip" -> null
+      - resource_group_name     = "rg-terraform-windows" -> null
+      - sku                     = "Basic" -> null
+      - sku_tier                = "Regional" -> null
+      - tags                    = {} -> null
+      - zones                   = [] -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # azurerm_resource_group.rg will be destroyed
+  - resource "azurerm_resource_group" "rg" {
+      - id         = "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows" -> null
+      - location   = "eastus" -> null
+      - name       = "rg-terraform-windows" -> null
+      - tags       = {} -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # azurerm_subnet.subnet will be destroyed
+  - resource "azurerm_subnet" "subnet" {
+      - address_prefixes                               = [
+          - "10.0.1.0/24",
+        ] -> null
+      - default_outbound_access_enabled                = true -> null
+      - enforce_private_link_endpoint_network_policies = false -> null
+      - enforce_private_link_service_network_policies  = false -> null
+      - id                                             = "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/virtualNetworks/vn
+et-terraform/subnets/subnet-01" -> null
+      - name                                           = "subnet-01" -> null
+      - private_endpoint_network_policies              = "Enabled" -> null
+      - private_endpoint_network_policies_enabled      = true -> null
+      - private_link_service_network_policies_enabled  = true -> null
+      - resource_group_name                            = "rg-terraform-windows" -> null
+      - service_endpoint_policy_ids                    = [] -> null
+      - service_endpoints                              = [] -> null
+      - virtual_network_name                           = "vnet-terraform" -> null
+    }
+
+  # azurerm_virtual_machine_extension.install_iis will be destroyed
+  - resource "azurerm_virtual_machine_extension" "install_iis" {
+      - auto_upgrade_minor_version  = false -> null
+      - automatic_upgrade_enabled   = false -> null
+      - failure_suppression_enabled = false -> null
+      - id                          = "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Compute/virtualMachines/win-iis-vm/extensions
+/InstallIIS" -> null
+      - name                        = "InstallIIS" -> null
+      - provision_after_extensions  = [] -> null
+      - publisher                   = "Microsoft.Compute" -> null
+      - settings                    = jsonencode(
+            {
+              - commandToExecute = "powershell -NoProfile -ExecutionPolicy Unrestricted -Command \"Install-WindowsFeature -Name Web-Server -IncludeManagementTools; Set-Content -Path 'C:\\inetp
+ub\\wwwroot\\index.html' -Value '<html><body><h1>Sample IIS site deployed by Terraform</h1></body></html>' -Force\""
+            }
+        ) -> null
+      - tags                        = {} -> null
+      - type                        = "CustomScriptExtension" -> null
+      - type_handler_version        = "1.10" -> null
+      - virtual_machine_id          = "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Compute/virtualMachines/win-iis-vm" -> null
+    }
+
+  # azurerm_virtual_network.vnet will be destroyed
+  - resource "azurerm_virtual_network" "vnet" {
+      - address_space           = [
+          - "10.0.0.0/16",
+        ] -> null
+      - dns_servers             = [] -> null
+      - flow_timeout_in_minutes = 0 -> null
+      - guid                    = "01389093-b859-4c66-b596-5e1e9266a0d4" -> null
+      - id                      = "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/virtualNetworks/vnet-terraform" -> null
+      - location                = "eastus" -> null
+      - name                    = "vnet-terraform" -> null
+      - resource_group_name     = "rg-terraform-windows" -> null
+      - subnet                  = [
+          - {
+              - address_prefix = "10.0.1.0/24"
+              - id             = "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/virtualNetworks/vnet-terraform/subnets/sub
+net-01"
+              - name           = "subnet-01"
+                # (1 unchanged attribute hidden)
+            },
+        ] -> null
+      - tags                    = {} -> null
+        # (2 unchanged attributes hidden)
+    }
+
+  # azurerm_windows_virtual_machine.vm will be destroyed
+  - resource "azurerm_windows_virtual_machine" "vm" {
+      - admin_password                                         = (sensitive value) -> null
+      - admin_username                                         = "azureuser" -> null
+      - allow_extension_operations                             = true -> null
+      - bypass_platform_safety_checks_on_user_schedule_enabled = false -> null
+      - computer_name                                          = "win-iis-vm" -> null
+      - enable_automatic_updates                               = true -> null
+      - encryption_at_host_enabled                             = false -> null
+      - extensions_time_budget                                 = "PT1H30M" -> null
+      - hotpatching_enabled                                    = false -> null
+      - id                                                     = "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Compute/virtualMac
+hines/win-iis-vm" -> null
+      - location                                               = "eastus" -> null
+      - max_bid_price                                          = -1 -> null
+      - name                                                   = "win-iis-vm" -> null
+      - network_interface_ids                                  = [
+          - "/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/networkInterfaces/win-iis-vm-nic",
+        ] -> null
+      - patch_assessment_mode                                  = "ImageDefault" -> null
+      - patch_mode                                             = "AutomaticByOS" -> null
+      - platform_fault_domain                                  = -1 -> null
+      - priority                                               = "Regular" -> null
+      - private_ip_address                                     = "10.0.1.4" -> null
+      - private_ip_addresses                                   = [
+          - "10.0.1.4",
+        ] -> null
+      - provision_vm_agent                                     = true -> null
+      - public_ip_address                                      = "40.87.25.79" -> null
+      - public_ip_addresses                                    = [
+          - "40.87.25.79",
+        ] -> null
+      - resource_group_name                                    = "rg-terraform-windows" -> null
+      - secure_boot_enabled                                    = false -> null
+      - size                                                   = "Standard_B2s" -> null
+      - tags                                                   = {} -> null
+      - virtual_machine_id                                     = "18611266-1cc4-4434-b580-38c113c762d0" -> null
+      - vm_agent_platform_updates_enabled                      = true -> null
+      - vtpm_enabled                                           = false -> null
+        # (15 unchanged attributes hidden)
+
+      - os_disk {
+          - caching                          = "ReadWrite" -> null
+          - disk_size_gb                     = 127 -> null
+          - name                             = "win-iis-vm_OsDisk_1_517b306f68074c51b5c64f046525afd7" -> null
+          - storage_account_type             = "Standard_LRS" -> null
+          - write_accelerator_enabled        = false -> null
+            # (3 unchanged attributes hidden)
+        }
+
+      - source_image_reference {
+          - offer     = "WindowsServer" -> null
+          - publisher = "MicrosoftWindowsServer" -> null
+          - sku       = "2019-Datacenter" -> null
+          - version   = "latest" -> null
+        }
+    }
+
+Plan: 0 to add, 0 to change, 7 to destroy.
+
+Changes to Outputs:
+  - admin_username    = "azureuser" -> null
+  - public_ip_address = "40.87.25.79" -> null
+  - vm_name           = "win-iis-vm" -> null
+
+Do you really want to destroy all resources?
+  Terraform will destroy all your managed infrastructure, as shown above.
+  There is no undo. Only 'yes' will be accepted to confirm.
+
+  Enter a value: yes
+
+azurerm_virtual_machine_extension.install_iis: Destroying... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Compute/virtualMach
+ines/win-iis-vm/extensions/InstallIIS]
+azurerm_virtual_machine_extension.install_iis: Still destroying... [id=/subscriptions/<sub ID>-...hines/win-iis-vm/extensions/InstallIIS, 00m10s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still destroying... [id=/subscriptions/<sub ID>-...hines/win-iis-vm/extensions/InstallIIS, 00m20s elapsed]
+azurerm_virtual_machine_extension.install_iis: Still destroying... [id=/subscriptions/<sub ID>-...hines/win-iis-vm/extensions/InstallIIS, 00m30s elapsed]
+azurerm_virtual_machine_extension.install_iis: Destruction complete after 34s
+azurerm_windows_virtual_machine.vm: Destroying... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Compute/virtualMachines/win-ii
+s-vm]
+azurerm_windows_virtual_machine.vm: Still destroying... [id=/subscriptions/<sub ID>-...oft.Compute/virtualMachines/win-iis-vm, 00m10s elapsed]
+azurerm_windows_virtual_machine.vm: Still destroying... [id=/subscriptions/<sub ID>-...oft.Compute/virtualMachines/win-iis-vm, 00m20s elapsed]
+azurerm_windows_virtual_machine.vm: Still destroying... [id=/subscriptions/<sub ID>-...oft.Compute/virtualMachines/win-iis-vm, 00m30s elapsed]
+azurerm_windows_virtual_machine.vm: Still destroying... [id=/subscriptions/<sub ID>-...oft.Compute/virtualMachines/win-iis-vm, 00m40s elapsed]
+azurerm_windows_virtual_machine.vm: Destruction complete after 41s
+azurerm_network_interface.nic: Destroying... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/networkInterfaces/win-iis-v
+m-nic]
+azurerm_network_interface.nic: Still destroying... [id=/subscriptions/<sub ID>-...twork/networkInterfaces/win-iis-vm-nic, 00m10s elapsed]
+azurerm_network_interface.nic: Destruction complete after 12s
+azurerm_subnet.subnet: Destroying... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/virtualNetworks/vnet-terraform/subn
+ets/subnet-01]
+azurerm_public_ip.pip: Destroying... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/publicIPAddresses/win-iis-vm-pip]
+azurerm_subnet.subnet: Still destroying... [id=/subscriptions/<sub ID>-...works/vnet-terraform/subnets/subnet-01, 00m10s elapsed]
+azurerm_public_ip.pip: Still destroying... [id=/subscriptions/<sub ID>-...twork/publicIPAddresses/win-iis-vm-pip, 00m10s elapsed]
+azurerm_subnet.subnet: Destruction complete after 11s
+azurerm_virtual_network.vnet: Destroying... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows/providers/Microsoft.Network/virtualNetworks/vnet-terrafo
+rm]
+azurerm_public_ip.pip: Destruction complete after 11s
+azurerm_virtual_network.vnet: Still destroying... [id=/subscriptions/<sub ID>-...Network/virtualNetworks/vnet-terraform, 00m10s elapsed]
+azurerm_virtual_network.vnet: Destruction complete after 12s
+azurerm_resource_group.rg: Destroying... [id=/subscriptions/<sub ID>/resourceGroups/rg-terraform-windows]
+azurerm_resource_group.rg: Still destroying... [id=/subscriptions/<sub ID>-...73/resourceGroups/rg-terraform-windows, 00m10s elapsed]
+azurerm_resource_group.rg: Destruction complete after 18s
+
+Destroy complete! Resources: 7 destroyed.
+
+Vijay@DESKTOP-2CC0QF5 MINGW64 ~/terraform-infra-codebase/Terraform-infra (main)
