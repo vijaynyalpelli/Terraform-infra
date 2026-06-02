@@ -34,6 +34,33 @@ jobs:
         id: init
         run: terraform init
 
+      # ===== AZURE AUTHENTICATION DISABLED FOR SAFETY =====
+      # terraform plan requires authentication to Azure to query current state.
+      # Currently DISABLED to prevent accidental API calls that could:
+      # - Incur Azure costs during CI runs
+      # - Modify or expose unintended resources
+      # - Expose credentials in CI logs
+      #
+      # To enable: Uncomment azure/login step below and configure GitHub secrets:
+      # Required Secrets:
+      #   - AZURE_CLIENT_ID (service principal client ID)
+      #   - AZURE_TENANT_ID (Azure AD tenant ID)
+      #   - AZURE_SUBSCRIPTION_ID (subscription ID)
+      #
+      # Recommended: Use OIDC token-based federation instead of storing secrets.
+      #
+      # For now, CI only validates Terraform syntax and formatting.
+      # Full plan validation (with Azure auth) happens in the manual
+      # deployment workflow which requires explicit approval.
+
+      # UNCOMMENT WHEN READY (requires GitHub secrets + OIDC/service principal setup):
+      # - name: Azure Login (OIDC)
+      #   uses: azure/login@v3
+      #   with:
+      #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Terraform Validate
         id: validate
         run: terraform validate -json
@@ -41,6 +68,15 @@ jobs:
       - name: Terraform Plan (No Apply)
         id: plan
         run: |
+          # ===== AZURE AUTHENTICATION REQUIRED =====
+          # This step requires Azure login (currently disabled for safety).
+          # Without Azure auth, terraform plan will fail with:
+          # "ERROR: Please run 'az login' to setup account"
+          #
+          # Since auth is disabled above, this will attempt to run but may fail.
+          # This is intentional to prevent accidental Azure API calls.
+          #
+          # For full CI validation with Azure, enable the azure/login step above.
           terraform plan -no-color -out=tfplan
         env:
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}

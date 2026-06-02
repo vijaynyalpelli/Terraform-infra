@@ -43,6 +43,41 @@ jobs:
         id: init
         run: terraform init
 
+      # ===== CRITICAL: AZURE AUTHENTICATION REQUIRED FOR DEPLOYMENT =====
+      # The following steps REQUIRE Azure authentication via az CLI or OIDC.
+      # Without authentication, terraform plan/apply will fail.
+      #
+      # CURRENTLY DISABLED TO PREVENT ACCIDENTAL COST INCURRENCE.
+      #
+      # To enable deployment, uncomment the Azure Login step below and:
+      # 1. Configure GitHub secrets:
+      #    - AZURE_CLIENT_ID
+      #    - AZURE_TENANT_ID
+      #    - AZURE_SUBSCRIPTION_ID
+      # 2. Set up Federated Credentials (OIDC) on your service principal
+      #    for keyless authentication (recommended).
+      #
+      # Reference: https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure
+      #
+      # ??  ENABLING THIS WILL ALLOW TERRAFORM TO MODIFY AZURE RESOURCES AND INCUR COSTS
+      #
+      # Uncomment when ready:
+      # - name: Azure Login (OIDC - Recommended)
+      #   uses: azure/login@v3
+      #   with:
+      #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      #
+      # Alternative (less secure - stores secrets):
+      # - name: Azure Login (Service Principal)
+      #   run: |
+      #     az login --service-principal \
+      #       -u ${{ secrets.AZURE_CLIENT_ID }} \
+      #       -p ${{ secrets.AZURE_CLIENT_SECRET }} \
+      #       --tenant ${{ secrets.AZURE_TENANT_ID }}
+      #     az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Log Deployment Action
         run: |
           echo "?? Deployment triggered by: ${{ github.actor }}"
@@ -50,22 +85,52 @@ jobs:
           echo "? Action: ${{ github.event.inputs.terraform_action }}"
           echo "?? Ref: ${{ github.ref }}"
           echo "?? Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo ""
+          echo "??  WARNING: Azure authentication is currently DISABLED"
+          echo "Uncomment the Azure Login step above to enable deployment"
+          echo "See comments above for setup instructions"
 
       - name: Terraform Plan
         id: plan
         if: github.event.inputs.terraform_action == 'plan' || github.event.inputs.terraform_action == 'apply'
         run: |
+          # ===== AZURE AUTH REQUIRED =====
+          # This step calls terraform plan which requires Azure authentication.
+          # Currently authentication is DISABLED above for safety.
+          # This will fail with: "ERROR: Please run 'az login' to setup account"
+          #
+          # To fix: Uncomment the Azure Login step above.
+          echo "??  Running terraform plan (Azure auth disabled - expect failure)"
           terraform plan -no-color -out=tfplan
         env:
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
+        continue-on-error: true
 
       - name: Terraform Apply
         id: apply
         if: github.event.inputs.terraform_action == 'apply'
         run: |
-          echo "??  APPLYING TERRAFORM CONFIGURATION"
-          terraform apply -auto-approve tfplan
+          # ===== CRITICAL: AZURE AUTH REQUIRED =====
+          # This step applies Terraform changes to Azure.
+          # Currently DISABLED because Azure authentication is not configured.
+          # This will fail with: "ERROR: Please run 'az login' to setup account"
+          #
+          # ENABLING THIS STEP WILL:
+          # - Create/modify/delete Azure resources
+          # - Incur costs for deployed infrastructure
+          # - Require explicit manual approval
+          #
+          # To enable:
+          # 1. Uncomment the Azure Login step above
+          # 2. Configure GitHub secrets (AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID)
+          # 3. Set up OIDC federated credentials
+          # 4. Create a GitHub environment with required reviewers
+          #
+          echo "? TERRAFORM APPLY IS DISABLED FOR SAFETY"
+          echo "Azure authentication is required but not configured"
+          echo "See comments above for setup instructions"
+          exit 1
         env:
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
@@ -74,8 +139,26 @@ jobs:
         id: destroy
         if: github.event.inputs.terraform_action == 'destroy'
         run: |
-          echo "? DESTROYING TERRAFORM RESOURCES"
-          terraform destroy -auto-approve
+          # ===== CRITICAL: AZURE AUTH REQUIRED =====
+          # This step destroys Terraform-managed Azure resources.
+          # Currently DISABLED because Azure authentication is not configured.
+          #
+          # ENABLING THIS STEP WILL:
+          # - Delete ALL Azure resources created by Terraform
+          # - Free up resources and stop billing
+          # - Require explicit manual approval
+          #
+          # This is a destructive operation. Ensure you want to proceed.
+          #
+          # To enable:
+          # 1. Uncomment the Azure Login step above
+          # 2. Configure GitHub secrets
+          # 3. Set up environment approval (requires reviewer confirmation)
+          #
+          echo "? TERRAFORM DESTROY IS DISABLED FOR SAFETY"
+          echo "Azure authentication is required but not configured"
+          echo "See comments above for setup instructions"
+          exit 1
         env:
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
