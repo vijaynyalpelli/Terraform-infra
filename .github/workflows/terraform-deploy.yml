@@ -1,0 +1,111 @@
+name: Terraform Deploy (Manual - CD)
+
+# ===== MANUAL TRIGGER ONLY =====
+# This workflow is NOT triggered by push/PR
+# It must be manually triggered by ops/authorized user via GitHub UI or API
+on:
+  workflow_dispatch:
+    inputs:
+      terraform_action:
+        description: 'Terraform action to perform'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+
+permissions:
+  contents: read
+  id-token: write  # Required for OIDC token generation
+
+jobs:
+  terraform-deploy:
+    runs-on: ubuntu-latest
+    name: Terraform Deploy (Manual)
+
+    # Require approval via environment
+    environment:
+      name: production
+      url: https://portal.azure.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: '1.0'
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Log Deployment Action
+        run: |
+          echo "?? Deployment triggered by: ${{ github.actor }}"
+          echo "?? Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "? Action: ${{ github.event.inputs.terraform_action }}"
+          echo "?? Ref: ${{ github.ref }}"
+          echo "?? Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      - name: Terraform Plan
+        id: plan
+        if: github.event.inputs.terraform_action == 'plan' || github.event.inputs.terraform_action == 'apply'
+        run: |
+          terraform plan -no-color -out=tfplan
+        env:
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
+
+      - name: Terraform Apply
+        id: apply
+        if: github.event.inputs.terraform_action == 'apply'
+        run: |
+          echo "??  APPLYING TERRAFORM CONFIGURATION"
+          terraform apply -auto-approve tfplan
+        env:
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
+
+      - name: Terraform Destroy
+        id: destroy
+        if: github.event.inputs.terraform_action == 'destroy'
+        run: |
+          echo "? DESTROYING TERRAFORM RESOURCES"
+          terraform destroy -auto-approve
+        env:
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
+
+      - name: Get Terraform Output
+        if: github.event.inputs.terraform_action == 'apply' && steps.apply.outcome == 'success'
+        run: |
+          echo "## Deployment Output" >> $GITHUB_STEP_SUMMARY
+          terraform output >> $GITHUB_STEP_SUMMARY
+
+      - name: Deployment Summary
+        if: always()
+        run: |
+          echo "## ?? Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Actor:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Action:** ${{ github.event.inputs.terraform_action }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**Run ID:** ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify on Success
+        if: job.status == 'success'
+        run: |
+          echo "? Deployment completed successfully!"
+          echo "Review changes in Azure portal: https://portal.azure.com"
+
+      - name: Notify on Failure
+        if: job.status == 'failure'
+        run: |
+          echo "? Deployment failed!"
+          echo "Review logs above for details."
+          exit 1

@@ -1,0 +1,98 @@
+name: Terraform Plan (CI - No Deploy)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  TERRAFORM_VERSION: 1.0
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    name: Terraform Validate & Plan
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform Format Check
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -json
+
+      - name: Terraform Plan (No Apply)
+        id: plan
+        run: |
+          terraform plan -no-color -out=tfplan
+        env:
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
+        continue-on-error: true
+
+      - name: Comment Plan on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = `${{ steps.plan.outputs.stdout }}`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Terraform Plan\n\`\`\`\n${plan}\n\`\`\``
+            });
+
+      # ===== DEPLOYMENT SECTIONS COMMENTED OUT =====
+      # Uncomment only when manually triggered and approved by ops team
+
+      # - name: Terraform Apply
+      #   id: apply
+      #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      #   run: terraform apply -auto-approve tfplan
+      #   env:
+      #     TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      #     TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
+
+      # - name: Post Apply Output
+      #   if: steps.apply.outcome == 'success'
+      #   run: |
+      #     terraform output > apply-output.txt
+      #     echo "Deployment completed successfully"
+      #     cat apply-output.txt
+
+      # - name: Upload Apply Output
+      #   if: steps.apply.outcome == 'success'
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: terraform-apply-output
+      #     path: apply-output.txt
+
+      - name: Job Summary
+        run: |
+          echo "## ? Terraform CI Validation Completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** Code checked, no deployment performed" >> $GITHUB_STEP_SUMMARY
+          echo "**Format Check:** ${{ steps.fmt.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Validation:** ${{ steps.validate.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Plan:** ${{ steps.plan.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "?? **To deploy:** Uncomment apply steps and trigger manually" >> $GITHUB_STEP_SUMMARY
