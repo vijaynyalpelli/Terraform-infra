@@ -54,19 +54,20 @@ resource "azurerm_windows_virtual_machine" "vm" {
   network_interface_ids = [
     azurerm_network_interface.nic.id
   ]
-}
 
-os_disk {
-  caching              = "ReadWrite"
-  storage_account_type = "Standard_LRS"
-  disk_size_gb         = var.os_disk_size_gb
-}
 
-source_image_reference {
-  publisher = var.image_publisher
-  offer     = var.image_offer
-  sku       = var.image_sku
-  version   = "latest"
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb         = var.os_disk_size_gb
+  }
+
+  source_image_reference {
+    publisher = var.image_publisher
+    offer     = var.image_offer
+    sku       = var.image_sku
+    version   = "latest"
+  }
 }
 
 # IIS installation via Custom Script Extension
