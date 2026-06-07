@@ -95,5 +95,5 @@ variable "os_disk_size_gb" {
   # Windows Server images include a larger OS disk). Increase this value if you
   # see an error during VM creation stating the image disk is larger than the
   # requested size. Default set to 127 GB to match common platform image sizes.
-  default     = 127
+  default = 127
 }
