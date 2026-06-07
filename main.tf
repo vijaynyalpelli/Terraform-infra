@@ -1,8 +1,10 @@
+# Azure Resource Group
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
 }
 
+# Virtual Network for VM connectivity
 resource "azurerm_virtual_network" "vnet" {
   name                = var.vnet_name
   address_space       = var.vnet_address_space
@@ -10,6 +12,7 @@ resource "azurerm_virtual_network" "vnet" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
+# Subnet within the virtual network
 resource "azurerm_subnet" "subnet" {
   name                 = var.subnet_name
   resource_group_name  = azurerm_resource_group.rg.name
@@ -17,6 +20,7 @@ resource "azurerm_subnet" "subnet" {
   address_prefixes     = [var.subnet_prefix]
 }
 
+# Public IP for VM access
 resource "azurerm_public_ip" "pip" {
   name                = "${var.vm_name}-pip"
   location            = azurerm_resource_group.rg.location
@@ -25,6 +29,7 @@ resource "azurerm_public_ip" "pip" {
   sku                 = var.public_ip_sku
 }
 
+# Network Interface connected to subnet and public IP
 resource "azurerm_network_interface" "nic" {
   name                = "${var.vm_name}-nic"
   location            = azurerm_resource_group.rg.location
@@ -38,7 +43,7 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-// Windows VM using managed disk and platform image
+# Windows Virtual Machine with managed OS disk
 resource "azurerm_windows_virtual_machine" "vm" {
   name                = var.vm_name
   resource_group_name = azurerm_resource_group.rg.name
@@ -63,13 +68,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
     version   = "latest"
   }
 
-  // Enable boot diagnostics if needed (optional)
-  // boot_diagnostics {
-  //   storage_account_uri = azurerm_storage_account.example.primary_blob_endpoint
-  // }
-}
-
-// Install IIS using Custom Script Extension with inline PowerShell
+# IIS installation via Custom Script Extension
 resource "azurerm_virtual_machine_extension" "install_iis" {
   name                 = "InstallIIS"
   virtual_machine_id   = azurerm_windows_virtual_machine.vm.id
